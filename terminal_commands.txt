@@ -1,0 +1,11 @@
+# Commands written to make the proper container image 
+
+# ROS2 Lyrical Container: OnBoard Computer - At the moment it's ROS2 Rolling as lyrical is not published yet 
+distrobox create --image ubuntu:26.04 --name ros2_container
+
+https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debs.html
+
+# Gazebo Jetty Container: 
+distrobox create --image ubuntu:24.04 --name gazebo_container
+
+https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debs.html
