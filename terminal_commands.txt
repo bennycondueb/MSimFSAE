@@ -3,10 +3,16 @@
 # ROS2 Lyrical Container: OnBoard Computer -
 used official image on docker for lyrical -> perception as we want everything
 double check proper commands 
-
+https://hub.docker.com/_/ros?xk=ShowRecommendedBadge&xt=Disabled
 https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debs.html
+
+# Control Container: still ROS2 Lyrical (for the sake of simulator's controls) 
+
+https://hub.docker.com/r/osrf/ros/
+ros:lyrical-ros-base-resolute image 
+
+
 
 # Gazebo Jetty Container: 
 distrobox create --image ubuntu:24.04 --name gazebo_container
-
-https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debs.html
+https://gazebosim.org/docs/jetty/install_ubuntu/
