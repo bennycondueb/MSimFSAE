@@ -15,14 +15,14 @@ def generate_launch_description():
     path_to_urdf = get_package_share_path('simulator_description') / 'urdf' / 'racecar.xacro'
 
     return LaunchDescription([
-        #SetEnvironmentVariable(
-        #    'GZ_SIM_RESOURCE_PATH',
-        #    PathJoinSubstitution([example_pkg_path, 'models'])
-        #),
-        #SetEnvironmentVariable(
-        #    'GZ_SIM_PLUGIN_PATH',
-        #    PathJoinSubstitution([example_pkg_path, 'plugins'])
-        #),
+        # SetEnvironmentVariable(
+        #     'GZ_SIM_RESOURCE_PATH',
+        #     PathJoinSubstitution([example_pkg_path, 'models'])
+        # ),
+        # SetEnvironmentVariable(
+        #     'GZ_SIM_PLUGIN_PATH',
+        #     PathJoinSubstitution([example_pkg_path, 'plugins'])
+        # ),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(gz_launch_path),
             launch_arguments={
@@ -51,7 +51,7 @@ def generate_launch_description():
                     Command(['xacro ', str(path_to_urdf)]), value_type=str
                 )
             }]
-        ), 
+        ),
 
         # Node for the process topic -> robot spawning 
         Node(
@@ -68,7 +68,7 @@ def generate_launch_description():
         ),
 
         
-        # Debug node just for our easyness 
+        # Debug node just for our easyness
         Node(
             package='path_planning',
             executable='path_planning',
