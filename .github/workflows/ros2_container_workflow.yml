@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     
     container:
-      image: osrf/ros:lyrical-ros-base 
+      image: ros:lyrical-ros-base 
 
     steps:
       - name: Making ros2 workspace 
