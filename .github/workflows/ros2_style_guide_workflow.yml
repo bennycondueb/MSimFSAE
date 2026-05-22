@@ -1,8 +1,6 @@
 name: ros2_container_workflow 
 
 on:
-  push:
-    branches: ["ros2_integration", "ci_integration" ]
   pull_request:
     branches: [ "main" ]
 
@@ -42,7 +40,7 @@ jobs:
           . install/setup.sh
           colcon test --event-handlers console_direct+
 
-      # - name: Test Results Validation
-      #   working-directory: ros2_ws
-      #   run: |
-      #     colcon test-result --all
+      - name: Test Results Validation
+        working-directory: ros2_ws
+        run: |
+          colcon test-result --all
