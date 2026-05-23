@@ -29,13 +29,13 @@ add_executable(slam src/slam.cpp)
 target_link_libraries(slam rclcpp::rclcpp)
 target_link_libraries(slam std_msgs::std_msgs)
 
-install( TARGETS 
-  slam 
+install(TARGETS
+  slam
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install( 
-  DIRECTORY launch 
+install(
+  DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}
 )
 

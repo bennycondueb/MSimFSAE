@@ -2,10 +2,11 @@ from ament_index_python.packages import get_package_share_directory, get_package
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
 from launch.substitutions import Command, PathJoinSubstitution
+from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
+
 
 def generate_launch_description():
     ros_gz_sim_pkg_path = get_package_share_directory('ros_gz_sim')
@@ -25,7 +26,8 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(gz_launch_path),
             launch_arguments={
-                'gz_args': PathJoinSubstitution([sim_description_pkg_path, 'worlds/empty.sdf']),
+                'gz_args': PathJoinSubstitution([sim_description_pkg_path,
+                                                'worlds/empty.sdf']),
                 'on_exit_shutdown': 'True'
             }.items(),
         ),
@@ -40,8 +42,8 @@ def generate_launch_description():
         #     output='screen'
         # ),
 
-
-        # Node for the process xacro -> urdf -> gazebo
+        # Node for the process
+        # xacro -> urdf -> gazebo
         Node(
             package='robot_state_publisher',
             executable='robot_state_publisher',
@@ -52,7 +54,8 @@ def generate_launch_description():
             }]
         ),
 
-        # Node for the process topic -> robot spawning
+        # Node for the process
+        # topic -> robot spawning
         Node(
             package='ros_gz_sim',
             executable='create',
@@ -65,7 +68,6 @@ def generate_launch_description():
             ],
             output='screen'
         ),
-
 
         # Debug node just for our easyness
         Node(
