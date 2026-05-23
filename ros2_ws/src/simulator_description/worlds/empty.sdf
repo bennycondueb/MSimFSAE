@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <sdf version="1.8">
-    <world name="empty_custom_world">
+    <world name="empty">
     
         <plugin
             filename="gz-sim-physics-system"

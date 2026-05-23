@@ -1,0 +1,48 @@
+name: ros2_container_workflow 
+
+on:
+  push:
+    branches: ["ros2_integration", "ci_integration" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    container:
+      image: ros:lyrical-ros-base 
+
+    steps:
+      - name: Making ros2 workspace 
+        run: mkdir -p ros2_ws/src
+
+      - name: Repository Checkout + Code clone
+        uses: actions/checkout@v4
+        with:
+          path: ros2_ws/src/package_name
+
+      - name: Update + Rosdep solutions
+        working-directory: ros2_ws
+        run: |
+          apt-get update
+          rosdep update
+          rosdep install --from-paths src --ignore-src -y --rosdistro lyrical
+
+      - name: Colcon Build!
+        working-directory: ros2_ws
+        run: |
+          . /opt/ros/lyrical/setup.sh
+          colcon build --event-handlers console_direct+
+
+      - name: Colcon Test
+        working-directory: ros2_ws
+        run: |
+          . /opt/ros/lyrical/setup.sh
+          . install/setup.sh
+          colcon test --event-handlers console_direct+
+
+      # - name: Test Results Validation
+      #   working-directory: ros2_ws
+      #   run: |
+      #     colcon test-result --all

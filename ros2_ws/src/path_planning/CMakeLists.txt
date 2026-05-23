@@ -22,13 +22,13 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-# these names need to be COHERENT !! 
-add_executable(path_planning src/path_planning.cpp) 
+# these names need to be COHERENT !!
+add_executable(path_planning src/path_planning.cpp)
 target_link_libraries(path_planning rclcpp::rclcpp)
 target_link_libraries(path_planning std_msgs::std_msgs)
 
 
-install( TARGETS 
+install(TARGETS
   path_planning
   DESTINATION lib/${PROJECT_NAME}
 )
