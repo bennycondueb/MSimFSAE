@@ -1,12 +1,17 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="robot">
 
+    <!-- STL & DAE files -->
+    <xacro:property name="RACECAR_WHEEL_STL" value="file://$(find simulator_description)/meshes/wheel.stl"/>
+    <xacro:property name="RACECAR_COLLISION_STL" value="file://$(find simulator_description)/meshes/whole_car.stl"/>
+    <xacro:property name="RACECAR_VISUAL_DAE" value=""/>
+    <xacro:property name="RACECAR_STEERING_HINGE_STL" value="file://$(find simulator_description)/meshes/steering_hinge.stl"/>
+
+    <!-- Vehicle Dynamics & So on -->
     <xacro:property name="RACECAR_WIDTH" value="1.575"/>
     <xacro:property name="RACECAR_LENGTH" value="2.5"/>
     <xacro:property name="RACECAR_HEIGHT" value="1.4"/>
     <xacro:property name="COG_HEIGHT" value="0.7"/> 
-    <xacro:property name="RACECAR_COLLISION_STL" value="file://$(find simulator_description)/meshes/whole_car.stl"/>
-    <xacro:property name="RACECAR_VISUAL_DAE" value=""/>
     <xacro:property name="RACECAR_MASS" value="190.0"/> <!-- Mass in KG -->
     <xacro:property name="RACECAR_INERTIA_IXX" value="2.26"/>
     <xacro:property name="RACECAR_INERTIA_IXY" value="0.0"/>
@@ -14,6 +19,8 @@
     <xacro:property name="RACECAR_INERTIA_IYY" value="6.26"/>
     <xacro:property name="RACECAR_INERTIA_IYZ" value="0.0"/>
     <xacro:property name="RACECAR_INERTIA_IZZ" value="8.5"/>
+    
+    <xacro:property name="DUMMY_VALUE" value="0.0" />
 
     <material name="blue"> <color rgba="0.0 0.0 1.0 0.5"/>  </material>
     <material name="orange"> <color rgba="1.0 1.0 0.0 0.5"/>  </material>
@@ -48,4 +55,148 @@
         </inertial>
     </link>
 
+    <joint name="base_chassis_to_steering_hinge" type="revolute">
+        <parent link="base_chassis"/>
+        <child link="steering_hinge" />
+        <axis>
+            <xyz expressed_in='__model__'>0 1 0</xyz>
+            <limit>
+                <lower>-1.79769e+308</lower>    <!--negative infinity-->
+                <upper>1.79769e+308</upper>     <!--positive infinity-->
+            </limit>
+        </axis>
+    </joint>
+
+    <link name="steering_hinge"> 
+        <visual> 
+            <geometry> 
+                <mesh filename="${RACECAR_STEERING_HINGE_STL}" scale="0.001 0.001 0.001"/>
+            </geometry>  
+        </visual>
+        <collision> 
+            <geometry> 
+                <mesh filename="${RACECAR_STEERING_HINGE_STL}" scale="0.001 0.001 0.001"/>
+            </geometry>  
+        </collision>
+        <inertial> 
+            <mass value="${DUMMY_VALUE}"/>
+            <inertia ixx="${DUMMY_VALUE}" ixy="${DUMMY_VALUE}" ixz="${DUMMY_VALUE}" iyy="${DUMMY_VALUE}" iyz="${DUMMY_VALUE}" izz="${DUMMY_VALUE}"/> 
+        </inertial> 
+    </link> 
+
+    <joint name="steering_hinge_to_left_front_wheel" type="revolute">
+        <parent link="steering_hinge"/>
+        <child link="left_front_wheel" />
+        <axis>
+            <xyz expressed_in='__model__'>0 1 0</xyz>
+            <limit>
+                <lower>-1.79769e+308</lower>    <!--negative infinity-->
+                <upper>1.79769e+308</upper>     <!--positive infinity-->
+            </limit>
+        </axis>
+    </joint>
+
+    <link name="left_front_wheel"> 
+        <visual> 
+            <geometry> 
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+            </geometry>  
+        </visual>
+        <collision> 
+            <geometry> 
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+            </geometry>  
+        </collision>
+        <inertial> 
+            <mass value="${DUMMY_VALUE}"/>
+            <inertia ixx="${DUMMY_VALUE}" ixy="${DUMMY_VALUE}" ixz="${DUMMY_VALUE}" iyy="${DUMMY_VALUE}" iyz="${DUMMY_VALUE}" izz="${DUMMY_VALUE}"/> 
+        </inertial> 
+    </link>
+
+    <joint name="steering_hinge_to_right_front_wheel" type="revolute">
+        <parent link="steering_hinge"/>
+        <child link="right_front_wheel" />
+        <axis>
+            <xyz expressed_in='__model__'>0 1 0</xyz>
+            <limit>
+                <lower>-1.79769e+308</lower>    <!--negative infinity-->
+                <upper>1.79769e+308</upper>     <!--positive infinity-->
+            </limit>
+        </axis>
+    </joint>
+
+    <link name="right_front_wheel"> 
+        <visual> 
+            <geometry> 
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+            </geometry>  
+        </visual>
+        <collision> 
+            <geometry> 
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+            </geometry>  
+        </collision>
+        <inertial> 
+            <mass value="${DUMMY_VALUE}"/>
+            <inertia ixx="${DUMMY_VALUE}" ixy="${DUMMY_VALUE}" ixz="${DUMMY_VALUE}" iyy="${DUMMY_VALUE}" iyz="${DUMMY_VALUE}" izz="${DUMMY_VALUE}"/> 
+        </inertial> 
+    </link>
+
+    <joint name="base_chassis_to_left_rear_wheel" type="revolute">
+        <parent link="base_chassis"/>
+        <child link="left_rear_wheel" />
+        <axis>
+            <xyz expressed_in='__model__'>0 1 0</xyz>
+            <limit>
+                <lower>-1.79769e+308</lower>    <!--negative infinity-->
+                <upper>1.79769e+308</upper>     <!--positive infinity-->
+            </limit>
+        </axis>
+    </joint>
+
+    <link name="left_rear_wheel"> 
+        <visual> 
+            <geometry> 
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+            </geometry>  
+        </visual>
+        <collision> 
+            <geometry> 
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+            </geometry>  
+        </collision>
+        <inertial> 
+            <mass value="${DUMMY_VALUE}"/>
+            <inertia ixx="${DUMMY_VALUE}" ixy="${DUMMY_VALUE}" ixz="${DUMMY_VALUE}" iyy="${DUMMY_VALUE}" iyz="${DUMMY_VALUE}" izz="${DUMMY_VALUE}"/> 
+        </inertial> 
+    </link>
+
+    <joint name="base_chassis_to_right_rear_wheel" type="revolute">
+        <parent link="base_chassis"/>
+        <child link="right_rear_wheel" />
+        <axis>
+            <xyz expressed_in='__model__'>0 1 0</xyz>
+            <limit>
+                <lower>-1.79769e+308</lower>    <!--negative infinity-->
+                <upper>1.79769e+308</upper>     <!--positive infinity-->
+            </limit>
+        </axis>
+    </joint>
+
+    <link name="right_rear_wheel"> 
+        <visual> 
+            <geometry> 
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+            </geometry>  
+        </visual>
+        <collision> 
+            <geometry> 
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+            </geometry>  
+        </collision>
+        <inertial> 
+            <mass value="${DUMMY_VALUE}"/>
+            <inertia ixx="${DUMMY_VALUE}" ixy="${DUMMY_VALUE}" ixz="${DUMMY_VALUE}" iyy="${DUMMY_VALUE}" iyz="${DUMMY_VALUE}" izz="${DUMMY_VALUE}"/> 
+        </inertial> 
+    </link>
 </robot>
