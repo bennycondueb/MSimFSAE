@@ -4,10 +4,22 @@
     <!-- STL & DAE files -->
     <xacro:property name="RACECAR_WHEEL_STL" value="file://$(find simulator_description)/meshes/wheel.stl"/>
     <xacro:property name="RACECAR_COLLISION_STL" value="file://$(find simulator_description)/meshes/whole_car.stl"/>
+    <xacro:property name="RACECAR_STEERING_HINGE_STL" value="file://$(find simulator_description)/meshes/steering_hinge.STL"/> <!-- the steering hinge is just a ball to make the wheel steer-->
     <xacro:property name="RACECAR_VISUAL_DAE" value=""/>
-    <xacro:property name="RACECAR_STEERING_HINGE_STL" value="file://$(find simulator_description)/meshes/steering_hinge.stl"/>
 
-    <!-- Vehicle Dynamics & So on -->
+    <!-- Positions of components -->
+    <xacro:property name="RACECAR_STEERING_HINGE_X" value="0.050"/> <!-- Given the origin of the chassis, position of the steering hinge-->
+    <xacro:property name="RACECAR_STEERING_HINGE_Y" value="0.0"/> <!-- for readability purposes, even if values are 0, we still parametrize them-->
+    <xacro:property name="RACECAR_STEERING_HINGE_Z" value="0.23"/>
+    <xacro:property name="RACECAR_WHEEL_FRONT_X" value="0.0" />
+    <xacro:property name="RACECAR_WHEEL_FRONT_Y" value="0.575" />
+    <xacro:property name="RACECAR_WHEEL_FRONT_Z" value="0.0" />
+    <xacro:property name="RACECAR_WHEEL_REAR_X" value="-1.6" />
+    <xacro:property name="RACECAR_WHEEL_REAR_Y" value="0.575" />
+    <xacro:property name="RACECAR_WHEEL_REAR_Z" value="0.23" />
+    
+
+    <!-- Vehicle Dynamics & Vehicle Parameters -->
     <xacro:property name="RACECAR_WIDTH" value="1.575"/>
     <xacro:property name="RACECAR_LENGTH" value="2.5"/>
     <xacro:property name="RACECAR_HEIGHT" value="1.4"/>
@@ -20,12 +32,18 @@
     <xacro:property name="RACECAR_INERTIA_IYZ" value="0.0"/>
     <xacro:property name="RACECAR_INERTIA_IZZ" value="8.5"/>
     
-    <xacro:property name="DUMMY_VALUE" value="0.0" />
+    <!-- Tire Parameters -->
 
-    <material name="blue"> <color rgba="0.0 0.0 1.0 0.5"/>  </material>
-    <material name="orange"> <color rgba="1.0 1.0 0.0 0.5"/>  </material>
-    <material name="white"> <color rgba="1.0 1.0 1.0 0.5"/>  </material>
-    <material name="black"> <color rgba="0.0 0.0 0.0 0.9"/>  </material>
+    <!-- Actuators Parameters-->
+
+    <xacro:property name="DUMMY_VALUE" value="1.0" />
+
+    <!-- Miscellaneous materials -->
+    <material name="blue"> <color rgba="0.0 0.0 0.8 1.0"/>  </material>
+    <material name="orange"> <color rgba="${255/255} ${108/255} ${10/255} 1.0"/> </material>
+    <material name="green"> <color rgba="0.0 1.0 0.0 0.9"/> </material>
+    <material name="white"> <color rgba="1.0 1.0 1.0 1.0"/>  </material>
+    <material name="black"> <color rgba="0.0 0.0 0.0 1.0"/>  </material>
 
     <link name="base_footprint">
     </link>
@@ -42,7 +60,7 @@
                 <!-- scaled because STL model is really strange-->
                 <mesh filename="${RACECAR_COLLISION_STL}" scale="0.001 0.001 0.001"/> 
             </geometry>
-            <material name="black" />
+            <material name="green" />
         </visual>
         <collision>
             <geometry>
@@ -58,145 +76,129 @@
     <joint name="base_chassis_to_steering_hinge" type="revolute">
         <parent link="base_chassis"/>
         <child link="steering_hinge" />
-        <axis>
-            <xyz expressed_in='__model__'>0 1 0</xyz>
-            <limit>
-                <lower>-1.79769e+308</lower>    <!--negative infinity-->
-                <upper>1.79769e+308</upper>     <!--positive infinity-->
-            </limit>
-        </axis>
+        <origin xyz="${RACECAR_STEERING_HINGE_X} ${RACECAR_STEERING_HINGE_Y} ${RACECAR_STEERING_HINGE_Z}"/> 
+        <axis xyz="0 0 1" />
+        <limit effort="100.0" velocity="10.0" lower="-0.795" upper="+0.795"/>
     </joint>
 
     <link name="steering_hinge"> 
         <visual> 
             <geometry> 
-                <mesh filename="${RACECAR_STEERING_HINGE_STL}" scale="0.001 0.001 0.001"/>
+                <mesh filename="${RACECAR_STEERING_HINGE_STL}" scale="1 1 1"/>
             </geometry>  
         </visual>
         <collision> 
             <geometry> 
-                <mesh filename="${RACECAR_STEERING_HINGE_STL}" scale="0.001 0.001 0.001"/>
+                <mesh filename="${RACECAR_STEERING_HINGE_STL}" scale="1 1 1"/>
             </geometry>  
         </collision>
         <inertial> 
             <mass value="${DUMMY_VALUE}"/>
-            <inertia ixx="${DUMMY_VALUE}" ixy="${DUMMY_VALUE}" ixz="${DUMMY_VALUE}" iyy="${DUMMY_VALUE}" iyz="${DUMMY_VALUE}" izz="${DUMMY_VALUE}"/> 
+            <inertia ixx="${RACECAR_INERTIA_IXX}" ixy="${RACECAR_INERTIA_IXY}" ixz="${RACECAR_INERTIA_IXZ}" iyy="${RACECAR_INERTIA_IYY}" iyz="${RACECAR_INERTIA_IYZ}" izz="${RACECAR_INERTIA_IZZ}" />
         </inertial> 
     </link> 
 
-    <joint name="steering_hinge_to_left_front_wheel" type="revolute">
+    <joint name="steering_hinge_to_left_front_wheel" type="continuous">
         <parent link="steering_hinge"/>
         <child link="left_front_wheel" />
-        <axis>
-            <xyz expressed_in='__model__'>0 1 0</xyz>
-            <limit>
-                <lower>-1.79769e+308</lower>    <!--negative infinity-->
-                <upper>1.79769e+308</upper>     <!--positive infinity-->
-            </limit>
-        </axis>
+        <origin xyz="${RACECAR_WHEEL_FRONT_X} ${RACECAR_WHEEL_FRONT_Y} ${RACECAR_WHEEL_FRONT_Z}"/> 
+        <axis xyz="0 1 0" />
+        <limit effort="100.0" velocity="10.0"/>
     </joint>
 
     <link name="left_front_wheel"> 
         <visual> 
             <geometry> 
-                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="1 1 1"/>
             </geometry>  
+            <material name="black" />
         </visual>
         <collision> 
             <geometry> 
-                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="1 1 1"/>
             </geometry>  
         </collision>
         <inertial> 
             <mass value="${DUMMY_VALUE}"/>
-            <inertia ixx="${DUMMY_VALUE}" ixy="${DUMMY_VALUE}" ixz="${DUMMY_VALUE}" iyy="${DUMMY_VALUE}" iyz="${DUMMY_VALUE}" izz="${DUMMY_VALUE}"/> 
+            <inertia ixx="${RACECAR_INERTIA_IXX}" ixy="${RACECAR_INERTIA_IXY}" ixz="${RACECAR_INERTIA_IXZ}" iyy="${RACECAR_INERTIA_IYY}" iyz="${RACECAR_INERTIA_IYZ}" izz="${RACECAR_INERTIA_IZZ}" />
         </inertial> 
     </link>
 
-    <joint name="steering_hinge_to_right_front_wheel" type="revolute">
+    <joint name="steering_hinge_to_right_front_wheel" type="continuous">
         <parent link="steering_hinge"/>
         <child link="right_front_wheel" />
-        <axis>
-            <xyz expressed_in='__model__'>0 1 0</xyz>
-            <limit>
-                <lower>-1.79769e+308</lower>    <!--negative infinity-->
-                <upper>1.79769e+308</upper>     <!--positive infinity-->
-            </limit>
-        </axis>
+        <origin xyz="${RACECAR_WHEEL_FRONT_X} -${RACECAR_WHEEL_FRONT_Y} ${RACECAR_WHEEL_FRONT_Z}"/> 
+        <axis xyz="0 1 0" />
+        <limit effort="100.0" velocity="10.0"/>
     </joint>
 
     <link name="right_front_wheel"> 
         <visual> 
             <geometry> 
-                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="1 1 1"/>
             </geometry>  
+            <material name="black" />
         </visual>
         <collision> 
             <geometry> 
-                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="1 1 1"/>
             </geometry>  
         </collision>
         <inertial> 
             <mass value="${DUMMY_VALUE}"/>
-            <inertia ixx="${DUMMY_VALUE}" ixy="${DUMMY_VALUE}" ixz="${DUMMY_VALUE}" iyy="${DUMMY_VALUE}" iyz="${DUMMY_VALUE}" izz="${DUMMY_VALUE}"/> 
+            <inertia ixx="${RACECAR_INERTIA_IXX}" ixy="${RACECAR_INERTIA_IXY}" ixz="${RACECAR_INERTIA_IXZ}" iyy="${RACECAR_INERTIA_IYY}" iyz="${RACECAR_INERTIA_IYZ}" izz="${RACECAR_INERTIA_IZZ}" />
         </inertial> 
     </link>
 
-    <joint name="base_chassis_to_left_rear_wheel" type="revolute">
+    <joint name="base_chassis_to_left_rear_wheel" type="continuous">
         <parent link="base_chassis"/>
         <child link="left_rear_wheel" />
-        <axis>
-            <xyz expressed_in='__model__'>0 1 0</xyz>
-            <limit>
-                <lower>-1.79769e+308</lower>    <!--negative infinity-->
-                <upper>1.79769e+308</upper>     <!--positive infinity-->
-            </limit>
-        </axis>
+        <origin xyz="${RACECAR_WHEEL_REAR_X} ${RACECAR_WHEEL_REAR_Y} ${RACECAR_WHEEL_REAR_Z}"/> 
+        <axis xyz="0 1 0" />
+        <limit effort="100.0" velocity="10.0"/>
     </joint>
 
     <link name="left_rear_wheel"> 
         <visual> 
             <geometry> 
-                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="1 1 1"/>
             </geometry>  
+            <material name="black" />
         </visual>
         <collision> 
             <geometry> 
-                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="1 1 1"/>
             </geometry>  
         </collision>
         <inertial> 
             <mass value="${DUMMY_VALUE}"/>
-            <inertia ixx="${DUMMY_VALUE}" ixy="${DUMMY_VALUE}" ixz="${DUMMY_VALUE}" iyy="${DUMMY_VALUE}" iyz="${DUMMY_VALUE}" izz="${DUMMY_VALUE}"/> 
+            <inertia ixx="${RACECAR_INERTIA_IXX}" ixy="${RACECAR_INERTIA_IXY}" ixz="${RACECAR_INERTIA_IXZ}" iyy="${RACECAR_INERTIA_IYY}" iyz="${RACECAR_INERTIA_IYZ}" izz="${RACECAR_INERTIA_IZZ}" />
         </inertial> 
     </link>
 
-    <joint name="base_chassis_to_right_rear_wheel" type="revolute">
+    <joint name="base_chassis_to_right_rear_wheel" type="continuous">
         <parent link="base_chassis"/>
         <child link="right_rear_wheel" />
-        <axis>
-            <xyz expressed_in='__model__'>0 1 0</xyz>
-            <limit>
-                <lower>-1.79769e+308</lower>    <!--negative infinity-->
-                <upper>1.79769e+308</upper>     <!--positive infinity-->
-            </limit>
-        </axis>
+        <origin xyz="${RACECAR_WHEEL_REAR_X} -${RACECAR_WHEEL_REAR_Y} ${RACECAR_WHEEL_REAR_Z}"/> 
+        <axis xyz="0 1 0" />
+        <limit effort="100.0" velocity="10.0"/>
     </joint>
 
     <link name="right_rear_wheel"> 
         <visual> 
             <geometry> 
-                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="1 1 1"/>
             </geometry>  
+            <material name="black" />
         </visual>
         <collision> 
             <geometry> 
-                <mesh filename="${RACECAR_WHEEL_STL}" scale="0.001 0.001 0.001"/>
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="1 1 1"/>
             </geometry>  
         </collision>
         <inertial> 
             <mass value="${DUMMY_VALUE}"/>
-            <inertia ixx="${DUMMY_VALUE}" ixy="${DUMMY_VALUE}" ixz="${DUMMY_VALUE}" iyy="${DUMMY_VALUE}" iyz="${DUMMY_VALUE}" izz="${DUMMY_VALUE}"/> 
+            <inertia ixx="${RACECAR_INERTIA_IXX}" ixy="${RACECAR_INERTIA_IXY}" ixz="${RACECAR_INERTIA_IXZ}" iyy="${RACECAR_INERTIA_IYY}" iyz="${RACECAR_INERTIA_IYZ}" izz="${RACECAR_INERTIA_IZZ}" />
         </inertial> 
     </link>
 </robot>
