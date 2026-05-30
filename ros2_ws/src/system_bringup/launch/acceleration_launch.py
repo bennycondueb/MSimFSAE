@@ -33,7 +33,7 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(gz_launch_path),
             launch_arguments={
                 'gz_args': PathJoinSubstitution([sim_description_pkg_path,
-                                                'worlds/empty.sdf']),
+                                                'worlds/acceleration.sdf']),
                 'on_exit_shutdown': 'True'
             }.items(),
         ),

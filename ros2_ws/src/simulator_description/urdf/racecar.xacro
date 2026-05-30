@@ -6,9 +6,9 @@
     <!-- ================================================ -->
 
     <!-- STL & DAE files -->
-    <xacro:property name="RACECAR_WHEEL_STL" value="file://$(find simulator_description)/meshes/wheel.stl"/>
-    <xacro:property name="RACECAR_COLLISION_STL" value="file://$(find simulator_description)/meshes/whole_car.stl"/>
-    <xacro:property name="RACECAR_STEERING_HINGE_STL" value="file://$(find simulator_description)/meshes/steering_hinge.STL"/> <!-- the steering hinge is just a ball to make the wheel steer-->
+    <xacro:property name="RACECAR_WHEEL_STL" value="file://$(find simulator_description)/meshes/car1/wheel.stl"/>
+    <xacro:property name="RACECAR_COLLISION_STL" value="file://$(find simulator_description)/meshes/car1/whole_car.stl"/>
+    <xacro:property name="RACECAR_STEERING_HINGE_STL" value="file://$(find simulator_description)/meshes/car1/steering_hinge.STL"/> <!-- the steering hinge is just a ball to make the wheel steer-->
     <xacro:property name="RACECAR_VISUAL_DAE" value=""/>
 
     <!-- Positions of components -->

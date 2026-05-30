@@ -31,6 +31,7 @@ install(
   config
   materials
   worlds
+  models
   DESTINATION share/${PROJECT_NAME}
 )
 
