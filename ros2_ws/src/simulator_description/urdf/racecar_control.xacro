@@ -1,0 +1,354 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="robot">
+
+    <!-- ================================================ -->
+    <!-- |           PARAMETERS & FILES & SO ON         |-->
+    <!-- ================================================ -->
+
+    <!-- STL & DAE files -->
+    <xacro:property name="RACECAR_WHEEL_STL" value="file://$(find simulator_description)/meshes/car1/wheel.stl"/>
+    <xacro:property name="RACECAR_COLLISION_STL" value="file://$(find simulator_description)/meshes/car1/whole_car.stl"/>
+    <xacro:property name="RACECAR_STEERING_HINGE_STL" value="file://$(find simulator_description)/meshes/car1/steering_hinge.STL"/> <!-- the steering hinge is just a ball to make the wheel steer-->
+    <xacro:property name="RACECAR_VISUAL_DAE" value=""/>
+
+    <!-- Positions of components -->
+    <!-- Wheels are positioned on the steering hinge -->
+    <!-- We only parametrize rear wheels are front wheels are positioned on the hinges -->
+    <xacro:property name="RACECAR_STEERING_HINGE_X" value="0.050"/> <!-- [m] -->
+    <xacro:property name="RACECAR_STEERING_HINGE_Y" value="0.575"/> <!-- [m] -->
+    <xacro:property name="RACECAR_STEERING_HINGE_Z" value="0.23"/> <!-- [m] -->
+    <xacro:property name="RACECAR_WHEEL_REAR_X" value="-1.6" /> <!-- [m] -->
+    <xacro:property name="RACECAR_WHEEL_REAR_Y" value="0.575" /> <!-- [m] -->
+    <xacro:property name="RACECAR_WHEEL_REAR_Z" value="0.23" /> <!-- [m] -->
+    
+    <!-- Racecar Parameters -->
+    <!-- most of these parameters depend on the specifics of your vehicle -->
+    <!-- consider that these dimensions come roughly from the STL-->
+    <!-- Gazebo wants coherent values for Inertia. -->
+    <!-- Consider using the scripts for plugging these values. -->
+    <xacro:property name="RACECAR_WIDTH" value="1.575"/> <!-- [m] -->
+    <xacro:property name="RACECAR_LENGTH" value="2.942"/> <!-- [m] -->
+    <xacro:property name="RACECAR_HEIGHT" value="1.119"/> <!-- [m] -->
+    <xacro:property name="COG_HEIGHT" value="0.7"/>  <!-- [m] -->
+    <xacro:property name="RACECAR_MASS" value="190.0"/> <!-- [kg] -->
+    <xacro:property name="RACECAR_INERTIA_IXX" value="59.10244"/> <!-- [kg^2 m] -->
+    <xacro:property name="RACECAR_INERTIA_IXY" value="0.0"/> <!-- [kg^2 m] -->
+    <xacro:property name="RACECAR_INERTIA_IXZ" value="0.0"/> <!-- [kg^2 m] -->
+    <xacro:property name="RACECAR_INERTIA_IYY" value="156.86915"/> <!-- [kg^2 m] -->
+    <xacro:property name="RACECAR_INERTIA_IYZ" value="0.0"/> <!-- [kg^2 m] -->
+    <xacro:property name="RACECAR_INERTIA_IZZ" value="176.31983"/> <!-- [kg^2 m] -->
+
+    <!-- Steering Hinge Paranmeters -->
+    <xacro:property name="STEERING_HINGE_WIDTH" value="0.1"/> <!-- [m] -->
+    <xacro:property name="STEERING_HINGE_LENGTH" value="0.1"/> <!-- [m] -->
+    <xacro:property name="STEERING_HINGE_HEIGHT" value="0.1"/> <!-- [m] -->
+    <xacro:property name="STEERING_HINGE_MASS" value="2.0"/> <!-- [kg] -->
+    <xacro:property name="STEERING_HINGE_INERTIA_IXX" value="0.00333"/> <!-- [kg^2 m] -->
+    <xacro:property name="STEERING_HINGE_INERTIA_IXY" value="0.0"/> <!-- [kg^2 m] -->
+    <xacro:property name="STEERING_HINGE_INERTIA_IXZ" value="0.0"/> <!-- [kg^2 m] -->
+    <xacro:property name="STEERING_HINGE_INERTIA_IYY" value="0.00333"/> <!-- [kg^2 m] -->
+    <xacro:property name="STEERING_HINGE_INERTIA_IYZ" value="0.0"/> <!-- [kg^2 m] -->
+    <xacro:property name="STEERING_HINGE_INERTIA_IZZ" value="0.00333"/> <!-- [kg^2 m] -->
+
+    <!-- Tire Parameters -->
+    <xacro:property name="WHEEL_WIDTH" value="0.23"/> <!-- [m] -->
+    <xacro:property name="WHEEL_LENGTH" value="0.46"/> <!-- [m] -->
+    <xacro:property name="WHEEL_HEIGHT" value="0.46" /> <!-- [m] -->
+    <xacro:property name="WHEEL_MASS" value="10.0"/> <!-- [kg] -->
+    <xacro:property name="WHEEL_INERTIA_IXX" value="0.17633" /> <!-- [kg^2 m] -->
+    <xacro:property name="WHEEL_INERTIA_IXY" value="0.0" /> <!-- [kg^2 m] -->
+    <xacro:property name="WHEEL_INERTIA_IXZ" value="0.0" /> <!-- [kg^2 m] -->
+    <xacro:property name="WHEEL_INERTIA_IYY" value="0.00333" /> <!-- [kg^2 m] -->
+    <xacro:property name="WHEEL_INERTIA_IYZ" value="0.0" /> <!-- [kg^2 m] -->
+    <xacro:property name="WHEEL_INERTIA_IZZ" value="0.00333" /> <!-- [kg^2 m] -->
+
+    <!-- Actuators Parameters-->
+
+    <xacro:property name="DUMMY_VALUE" value="1.0" />
+
+    <!-- Miscellaneous materials -->
+    <material name="blue"> <color rgba="0.0 0.0 0.8 1.0"/>  </material>
+    <material name="orange"> <color rgba="${255/255} ${108/255} ${10/255} 1.0"/> </material>
+    <material name="green"> <color rgba="0.0 1.0 0.0 0.9"/> </material>
+    <material name="white"> <color rgba="1.0 1.0 1.0 1.0"/>  </material>
+    <material name="black"> <color rgba="0.0 0.0 0.0 1.0"/>  </material>
+
+    <!-- =========================================--> 
+    <!-- |              ACTUAL ROBOT              |-->
+    <!-- =========================================-->
+
+    <!-- Origin of the Robot -->
+    <link name="base_footprint">
+    </link>
+
+    <joint name="base_footprint_to_base_chassis" type="fixed"> 
+        <origin xyz="0.0 0.0 0.0"/>
+        <parent link="base_footprint"/>
+        <child link="base_chassis" /> 
+    </joint> 
+
+    <!-- Base Chassis of the Vehicle Model and Joints to components-->
+    <link name="base_chassis">
+        <visual>
+            <geometry> 
+                <!-- scaled because STL model is really strange-->
+                <mesh filename="${RACECAR_COLLISION_STL}" scale="0.001 0.001 0.001"/> 
+            </geometry>
+            <material name="green" />
+        </visual>
+        <collision>
+            <geometry>
+                <box size="${RACECAR_LENGTH} ${RACECAR_WIDTH} ${RACECAR_HEIGHT}" /> 
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="${RACECAR_MASS}" />
+            <inertia ixx="${RACECAR_INERTIA_IXX}" ixy="${RACECAR_INERTIA_IXY}" ixz="${RACECAR_INERTIA_IXZ}" iyy="${RACECAR_INERTIA_IYY}" iyz="${RACECAR_INERTIA_IYZ}" izz="${RACECAR_INERTIA_IZZ}" />
+        </inertial>
+    </link>
+
+    <joint name="base_chassis_to_left_steering_hinge" type="revolute">
+        <parent link="base_chassis"/>
+        <child link="left_steering_hinge" />
+        <origin xyz="${RACECAR_STEERING_HINGE_X} ${RACECAR_STEERING_HINGE_Y} ${RACECAR_STEERING_HINGE_Z}"/> 
+        <axis xyz="0 1 0" />
+        <limit effort="100.0" velocity="10.0" lower="-0.795" upper="+0.795"/>
+    </joint>
+
+    <joint name="base_chassis_to_right_steering_hinge" type="revolute">
+        <parent link="base_chassis"/>
+        <child link="right_steering_hinge" />
+        <origin xyz="${RACECAR_STEERING_HINGE_X} -${RACECAR_STEERING_HINGE_Y} ${RACECAR_STEERING_HINGE_Z}"/> 
+        <axis xyz="0 1 0" />
+        <limit effort="100.0" velocity="10.0" lower="-0.795" upper="+0.795"/>
+    </joint>
+
+    <joint name="base_chassis_to_left_rear_wheel" type="continuous">
+        <parent link="base_chassis"/>
+        <child link="left_rear_wheel" />
+        <origin xyz="${RACECAR_WHEEL_REAR_X} ${RACECAR_WHEEL_REAR_Y} ${RACECAR_WHEEL_REAR_Z}"/> 
+        <axis xyz="0 1 0" />
+        <limit effort="100.0" velocity="10.0"/>
+    </joint>
+
+    <joint name="base_chassis_to_right_rear_wheel" type="continuous">
+        <parent link="base_chassis"/>
+        <child link="right_rear_wheel" />
+        <origin xyz="${RACECAR_WHEEL_REAR_X} -${RACECAR_WHEEL_REAR_Y} ${RACECAR_WHEEL_REAR_Z}"/> 
+        <axis xyz="0 1 0" />
+        <limit effort="100.0" velocity="10.0"/>
+    </joint>
+
+    <!-- Left & Right Steering Hinges + Joints to wheels -->
+    <link name="left_steering_hinge"> 
+        <visual> 
+            <geometry> 
+                <mesh filename="${RACECAR_STEERING_HINGE_STL}" scale="1 1 1"/>
+            </geometry>  
+        </visual>
+        <collision> 
+            <geometry> 
+                <box size="${STEERING_HINGE_LENGTH} ${STEERING_HINGE_WIDTH} ${STEERING_HINGE_HEIGHT}" />
+            </geometry>  
+        </collision>
+        <inertial> 
+            <mass value="${STEERING_HINGE_MASS}"/>
+            <inertia ixx="${RACECAR_INERTIA_IXX}" ixy="${RACECAR_INERTIA_IXY}" ixz="${RACECAR_INERTIA_IXZ}" iyy="${RACECAR_INERTIA_IYY}" iyz="${RACECAR_INERTIA_IYZ}" izz="${RACECAR_INERTIA_IZZ}" />
+        </inertial> 
+    </link> 
+
+    <link name="right_steering_hinge"> 
+        <visual> 
+            <geometry> 
+                <mesh filename="${RACECAR_STEERING_HINGE_STL}" scale="1 1 1"/>
+            </geometry>  
+        </visual>
+        <collision> 
+            <geometry> 
+                <box size="${STEERING_HINGE_LENGTH} ${STEERING_HINGE_WIDTH} ${STEERING_HINGE_HEIGHT}" />
+            </geometry>  
+        </collision>
+        <inertial> 
+            <mass value="${STEERING_HINGE_MASS}"/>
+            <inertia ixx="${RACECAR_INERTIA_IXX}" ixy="${RACECAR_INERTIA_IXY}" ixz="${RACECAR_INERTIA_IXZ}" iyy="${RACECAR_INERTIA_IYY}" iyz="${RACECAR_INERTIA_IYZ}" izz="${RACECAR_INERTIA_IZZ}" />
+        </inertial> 
+    </link> 
+
+    <joint name="left_steering_hinge_to_left_front_wheel" type="continuous">
+        <parent link="left_steering_hinge"/>
+        <child link="left_front_wheel" />
+        <origin xyz="0 0 0"/> 
+        <axis xyz="0 1 0" />
+        <limit effort="100.0" velocity="10.0"/>
+    </joint>
+
+    <joint name="right_steering_hinge_to_right_front_wheel" type="continuous">
+        <parent link="right_steering_hinge"/>
+        <child link="right_front_wheel" />
+        <origin xyz="0 0 0"/> 
+        <axis xyz="0 1 0" />
+        <limit effort="100.0" velocity="10.0"/>
+    </joint>
+
+    <!-- Front Wheels -->
+    <link name="left_front_wheel"> 
+        <visual> 
+            <geometry> 
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="1 1 1"/>
+            </geometry>  
+            <material name="black" />
+        </visual>
+        <collision> 
+            <geometry> 
+                <box size="${WHEEL_LENGTH} ${WHEEL_WIDTH} ${WHEEL_HEIGHT}"/>
+            </geometry>  
+        </collision>
+        <inertial> 
+            <mass value="${WHEEL_MASS}"/>
+            <inertia ixx="${RACECAR_INERTIA_IXX}" ixy="${RACECAR_INERTIA_IXY}" ixz="${RACECAR_INERTIA_IXZ}" iyy="${RACECAR_INERTIA_IYY}" iyz="${RACECAR_INERTIA_IYZ}" izz="${RACECAR_INERTIA_IZZ}" />
+        </inertial> 
+    </link>
+
+    <link name="right_front_wheel"> 
+        <visual> 
+            <geometry> 
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="1 1 1"/>
+            </geometry>  
+            <material name="black" />
+        </visual>
+        <collision> 
+            <geometry> 
+                <box size="${WHEEL_LENGTH} ${WHEEL_WIDTH} ${WHEEL_HEIGHT}"/>
+            </geometry>  
+        </collision>
+        <inertial> 
+            <mass value="${WHEEL_MASS}"/>
+            <inertia ixx="${RACECAR_INERTIA_IXX}" ixy="${RACECAR_INERTIA_IXY}" ixz="${RACECAR_INERTIA_IXZ}" iyy="${RACECAR_INERTIA_IYY}" iyz="${RACECAR_INERTIA_IYZ}" izz="${RACECAR_INERTIA_IZZ}" />
+        </inertial> 
+    </link>
+
+    <!-- Rear Wheels -->
+    <link name="left_rear_wheel"> 
+        <visual> 
+            <geometry> 
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="1 1 1"/>
+            </geometry>  
+            <material name="black" />
+        </visual>
+        <collision> 
+            <geometry> 
+                <box size="${WHEEL_LENGTH} ${WHEEL_WIDTH} ${WHEEL_HEIGHT}"/>
+            </geometry>  
+        </collision>
+        <inertial> 
+            <mass value="${WHEEL_MASS}"/>
+            <inertia ixx="${RACECAR_INERTIA_IXX}" ixy="${RACECAR_INERTIA_IXY}" ixz="${RACECAR_INERTIA_IXZ}" iyy="${RACECAR_INERTIA_IYY}" iyz="${RACECAR_INERTIA_IYZ}" izz="${RACECAR_INERTIA_IZZ}" />
+        </inertial> 
+    </link>
+
+    <link name="right_rear_wheel"> 
+        <visual> 
+            <geometry> 
+                <mesh filename="${RACECAR_WHEEL_STL}" scale="1 1 1"/>
+            </geometry>  
+            <material name="black" />
+        </visual>
+        <collision> 
+            <geometry> 
+                <box size="${WHEEL_LENGTH} ${WHEEL_WIDTH} ${WHEEL_HEIGHT}"/>
+            </geometry>  
+        </collision>
+        <inertial> 
+            <mass value="${WHEEL_MASS}"/>
+            <inertia ixx="${RACECAR_INERTIA_IXX}" ixy="${RACECAR_INERTIA_IXY}" ixz="${RACECAR_INERTIA_IXZ}" iyy="${RACECAR_INERTIA_IYY}" iyz="${RACECAR_INERTIA_IYZ}" izz="${RACECAR_INERTIA_IZZ}" />
+        </inertial> 
+    </link>
+
+    <!-- ROS2 CONTROL STUFF -->
+    <gazebo> 
+        <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <parameters>$(find gz_ros2_control_demos)/config/ackermann_drive_controller.yaml</parameters>   
+            <controller_manager_prefix_node_name>racecar_controller</controller_manager_prefix_node_name> 
+        </plugin>
+    </gazebo>
+
+    <ros2_control name="RaceCarControl" type="system">
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+
+        <joint name="base_chassis_to_left_steering_hinge">
+            <command_interface name="effort" >
+                <param name="min"> 1000 </param>
+                <param name="max"> 1000 </param>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">1.0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="base_chassis_to_right_steering_hinge">
+            <command_interface name="effort" >
+                <param name="min"> 1000 </param>
+                <param name="max"> 1000 </param>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">1.0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="base_chassis_to_left_rear_wheel">
+            <command_interface name="effort" >
+                <param name="min"> 1000 </param>
+                <param name="max"> 1000 </param>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">1.0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="base_chassis_to_right_rear_wheel">
+            <command_interface name="effort" >
+                <param name="min"> 1000 </param>
+                <param name="max"> 1000 </param>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">1.0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="left_steering_hinge_to_left_front_wheel">
+            <command_interface name="effort" >
+                <param name="min"> 1000 </param>
+                <param name="max"> 1000 </param>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">1.0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="right_steering_hinge_to_right_front_wheel">
+            <command_interface name="effort" >
+                <param name="min"> 1000 </param>
+                <param name="max"> 1000 </param>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">1.0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+    </ros2_control>
+
+</robot>

@@ -14,7 +14,7 @@ def generate_launch_description():
     ros_gz_sim_pkg_path = get_package_share_directory('ros_gz_sim')
     sim_description_pkg_path = FindPackageShare('simulator_description')
     gz_launch_path = PathJoinSubstitution([ros_gz_sim_pkg_path, 'launch', 'gz_sim.launch.py'])
-    path_to_urdf = get_package_share_path('simulator_description') / 'urdf' / 'racecar.xacro'
+    path_to_urdf = get_package_share_path('simulator_description') / 'urdf' / 'racecar_control.xacro'
 
     return LaunchDescription([
         AppendEnvironmentVariable(
@@ -81,6 +81,14 @@ def generate_launch_description():
             executable='path_planning',
             name='custom_minimal_param_node',
             output='screen',
+            emulate_tty=True,
+        ), 
+
+        Node(
+            package='racecar_controller', 
+            executable='racecar_controller', 
+            name='basic_controller_node', 
+            output='screen', 
             emulate_tty=True,
         )
 
