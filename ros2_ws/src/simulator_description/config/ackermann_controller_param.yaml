@@ -1,0 +1,28 @@
+racecar_controller:
+  ros__parameters:
+    update_rate: 100
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+      
+# the names and values here NEED to be the same defined in the .Xacro file! 
+ackermann_controller:
+  ros__parameters:
+    type: ackermann_steering_controller/AckermannSteeringController
+
+    traction_joints_names: ['base_chassis_to_right_rear_wheel', 'base_chassis_to_left_rear_wheel']
+
+    steering_joints_names: ['base_chassis_to_right_steering_hinge', 'base_chassis_to_left_steering_hinge']
+
+    wheelbase: 1.65
+    traction_track_width: 1.14
+    steering_track_width: 1.14
+    traction_wheels_radius: 0.23
+
+    position_feedback: false
+    open_loop: false
+    reference_timeout: 1.0
+
+    base_frame_id: base_chassis
+    odom_frame_id: odom
+    enable_odom_tf: true

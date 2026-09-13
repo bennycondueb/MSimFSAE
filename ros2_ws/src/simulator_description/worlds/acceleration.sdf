@@ -75,9 +75,9 @@
 
                 <play_pause>true</play_pause>
                 <step>true</step>
-                <start_paused>true</start_paused>
-                <service>/world/world_demo/control</service>
-                <stats_topic>/world/world_demo/stats</stats_topic>
+                <start_paused>false</start_paused>
+                <service>/world/acceleration/control</service>
+                <stats_topic>/world/acceleration/stats</stats_topic>
             </plugin>
 
             <!-- Entity tree -->

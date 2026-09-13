@@ -10,5 +10,5 @@ def generate_launch_description():
             name='racecar_controller',
             output='screen',
             emulate_tty=True,
-        )
+        ),
     ])

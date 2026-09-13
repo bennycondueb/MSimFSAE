@@ -4,7 +4,7 @@ from ament_index_python.packages import get_package_share_directory, get_package
 from launch import LaunchDescription
 from launch.actions import AppendEnvironmentVariable, IncludeLaunchDescription, SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, PathJoinSubstitution
+from launch.substitutions import Command, PathJoinSubstitution, PathSubstitution
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
@@ -34,19 +34,18 @@ def generate_launch_description():
             launch_arguments={
                 'gz_args': PathJoinSubstitution([sim_description_pkg_path,
                                                 'worlds/acceleration.sdf']),
-                'on_exit_shutdown': 'True'
+                'on_exit_shutdown': 'True' 
             }.items(),
         ),
 
-        # Bridging and remapping Gazebo topics to ROS 2 (replace with your own topics)
-        # Node(
-        #     package='ros_gz_bridge',
-        #     executable='parameter_bridge',
-        #     arguments=['/example_imu_topic@sensor_msgs/msg/Imu@gz.msgs.IMU',],
-        #     remappings=[('/example_imu_topic',
-        #                  '/remapped_imu_topic'),],
-        #     output='screen'
-        # ),
+        # Bridging Gazebo topics to ROS 2 -> clock
+        Node(
+            package='ros_gz_bridge',
+            executable='parameter_bridge',
+            arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',],
+            output='screen', 
+            parameters=[{'use_sim_time' : True}], 
+        ),
 
         # Node for the process
         # xacro -> urdf -> gazebo
@@ -56,8 +55,10 @@ def generate_launch_description():
             parameters=[{
                 'robot_description': ParameterValue(
                     Command(['xacro ', str(path_to_urdf)]), value_type=str
-                )
-            }]
+                )}, 
+                {'use_sim_time' : True}, 
+            ],
+            
         ),
 
         # Node for the process
@@ -72,7 +73,8 @@ def generate_launch_description():
                 '-y', '0.0',
                 '-z', '0.0',
             ],
-            output='screen'
+            output='screen', 
+            parameters=[{'use_sim_time' : True}], 
         ),
 
         # Debug node just for our easyness
@@ -84,12 +86,32 @@ def generate_launch_description():
             emulate_tty=True,
         ), 
 
+        # ROS2 Control Nodes 
         Node(
-            package='racecar_controller', 
-            executable='racecar_controller', 
-            name='basic_controller_node', 
-            output='screen', 
-            emulate_tty=True,
-        )
+            package='controller_manager',
+            executable='spawner',
+            arguments=[
+                'joint_state_broadcaster',
+                '--controller-manager',
+                '/racecar_controller',
+            ],
+            output='screen',
+            parameters=[{'use_sim_time' : True}], 
+        ),
+
+        Node(
+            package='controller_manager',
+            executable='spawner',
+            arguments=[
+                'ackermann_controller',
+                '--controller-manager',
+                '/racecar_controller',
+            ],
+            parameters=[
+                PathSubstitution(FindPackageShare("simulator_description")) / "config" / "ackermann_controller_param.yaml",
+                {'use_sim_time' : True}, 
+            ], 
+            output='screen',
+        ),
 
     ])
