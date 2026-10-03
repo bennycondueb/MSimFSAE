@@ -1,8 +1,9 @@
 import os
 
-from ament_index_python.packages import get_package_share_directory, get_package_share_path, get_package_prefix
+from ament_index_python.packages import get_package_prefix
+from ament_index_python.packages import get_package_share_directory, get_package_share_path
 from launch import LaunchDescription
-from launch.actions import AppendEnvironmentVariable, IncludeLaunchDescription, SetEnvironmentVariable
+from launch.actions import AppendEnvironmentVariable, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, PathJoinSubstitution
 from launch_ros.actions import Node
@@ -22,9 +23,9 @@ def generate_launch_description():
             PathJoinSubstitution([sim_description_pkg_path, 'models'])
         ),
         AppendEnvironmentVariable(
-            'GZ_SIM_RESOURCE_PATH', 
+            'GZ_SIM_RESOURCE_PATH',
             os.path.join(get_package_prefix('simulator_description'), 'share')
-        ), 
+        ),
         # SetEnvironmentVariable(
         #     'GZ_SIM_PLUGIN_PATH',
         #     PathJoinSubstitution([example_pkg_path, 'plugins'])

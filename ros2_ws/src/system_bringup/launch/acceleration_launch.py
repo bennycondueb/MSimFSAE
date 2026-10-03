@@ -1,10 +1,11 @@
 import os
 
-from ament_index_python.packages import get_package_share_directory, get_package_share_path, get_package_prefix
+from ament_index_python.packages import get_package_prefix
+from ament_index_pythong.packages import get_package_share_directory, get_package_share_path
 from launch import LaunchDescription
-from launch.actions import AppendEnvironmentVariable, IncludeLaunchDescription, SetEnvironmentVariable
+from launch.actions import AppendEnvironmentVariable, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, PathJoinSubstitution, PathSubstitution
+from launch.substitutions import Command, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
@@ -14,7 +15,7 @@ def generate_launch_description():
     ros_gz_sim_pkg_path = get_package_share_directory('ros_gz_sim')
     sim_description_pkg_path = FindPackageShare('simulator_description')
     gz_launch_path = PathJoinSubstitution([ros_gz_sim_pkg_path, 'launch', 'gz_sim.launch.py'])
-    path_to_urdf = get_package_share_path('simulator_description') / 'urdf' / 'racecar_control.xacro'
+    urdf_path = get_package_share_path('simulator_description') / 'urdf' / 'racecar_control.xacro'
 
     return LaunchDescription([
         AppendEnvironmentVariable(
@@ -22,9 +23,9 @@ def generate_launch_description():
             PathJoinSubstitution([sim_description_pkg_path, 'models'])
         ),
         AppendEnvironmentVariable(
-            'GZ_SIM_RESOURCE_PATH', 
+            'GZ_SIM_RESOURCE_PATH',
             os.path.join(get_package_prefix('simulator_description'), 'share')
-        ), 
+        ),
         # SetEnvironmentVariable(
         #     'GZ_SIM_PLUGIN_PATH',
         #     PathJoinSubstitution([example_pkg_path, 'plugins'])
@@ -34,9 +35,9 @@ def generate_launch_description():
             launch_arguments={
                 'gz_args': [
                     PathJoinSubstitution([sim_description_pkg_path,
-                                                'worlds/acceleration.sdf']), 
-                    ' -r'], 
-                'on_exit_shutdown': 'True' 
+                                         'worlds/acceleration.sdf']),
+                    ' -r'],
+                'on_exit_shutdown': 'True'
             }.items(),
         ),
 
@@ -45,8 +46,8 @@ def generate_launch_description():
             package='ros_gz_bridge',
             executable='parameter_bridge',
             arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',],
-            output='screen', 
-            parameters=[{'use_sim_time' : True}], 
+            output='screen',
+            parameters=[{'use_sim_time': True}],
         ),
 
         # Node for the process
@@ -56,11 +57,11 @@ def generate_launch_description():
             executable='robot_state_publisher',
             parameters=[{
                 'robot_description': ParameterValue(
-                    Command(['xacro ', str(path_to_urdf)]), value_type=str
-                )}, 
-                {'use_sim_time' : True}, 
+                    Command(['xacro ', str(urdf_path)]), value_type=str
+                )},
+                {'use_sim_time': True},
             ],
-            
+
         ),
 
         # Node for the process
@@ -75,8 +76,8 @@ def generate_launch_description():
                 '-y', '0.0',
                 '-z', '0.0',
             ],
-            output='screen', 
-            parameters=[{'use_sim_time' : True}], 
+            output='screen',
+            parameters=[{'use_sim_time': True}],
         ),
 
         # Debug node just for our easyness
@@ -86,6 +87,6 @@ def generate_launch_description():
             name='custom_minimal_param_node',
             output='screen',
             emulate_tty=True,
-        ), 
+        ),
 
     ])

@@ -29,12 +29,12 @@ add_executable(racecar_controller src/racecar_controller.cpp)
 target_link_libraries(racecar_controller rclcpp::rclcpp)
 target_link_libraries(racecar_controller std_msgs::std_msgs)
 
-install (TARGETS
+install(TARGETS
   racecar_controller
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install (
+install(
   DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}
 )
