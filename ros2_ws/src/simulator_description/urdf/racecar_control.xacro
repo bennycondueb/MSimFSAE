@@ -62,9 +62,17 @@
     <xacro:property name="WHEEL_INERTIA_IYZ" value="0.0" /> <!-- [kg^2 m] -->
     <xacro:property name="WHEEL_INERTIA_IZZ" value="0.22042" /> <!-- [kg^2 m] -->
 
-    <!-- Actuators Parameters-->
-
-    <xacro:property name="DUMMY_VALUE" value="1.0" />
+    <!-- Gazebo Ackermann Stuff + Joint Limits-->
+    <xacro:property name="RACECAR_STEERING_HINGES_DISTANCE" value="1.15"/> <!-- [m], equal to the kingpin width, distance between steering hinges -->
+    <xacro:property name="MIN_VELOCITY" value="-1"/> <!-- [m/s] -->
+    <xacro:property name="MIN_ACCELERATION" value="-3"/> <!-- [m/s^2] -->
+    <xacro:property name="MAX_VELOCITY" value="1"/> <!-- [m/s] -->
+    <xacro:property name="MAX_ACCELERATION" value="3"/>  <!-- [m/s^2] -->
+    <xacro:property name="WHEELBASE" value="1.65"/> <!-- [m] -->
+    <xacro:property name="STEERING_LIMIT" value="0.795"/> <!-- 45 degrees in radians -->
+    <xacro:property name="TOPIC_TO_BRIDGE_ACKERMANN" value="/cmd_vel"/>
+    <xacro:property name="EFFORT_LIMIT" value="100"/> 
+    <xacro:property name="VELOCITY_LIMIT" value="10"/>
 
     <!-- Miscellaneous materials -->
     <material name="blue"> <color rgba="0.0 0.0 0.8 1.0"/>  </material>
@@ -73,8 +81,9 @@
     <material name="white"> <color rgba="1.0 1.0 1.0 1.0"/>  </material>
     <material name="black"> <color rgba="0.0 0.0 0.0 1.0"/>  </material>
 
+   
     <!-- =========================================--> 
-    <!-- |              ACTUAL ROBOT              |-->
+    <!-- |              ACTUAL ROBOT             |-->
     <!-- =========================================-->
 
     <!-- Origin of the Robot -->
@@ -113,7 +122,7 @@
         <child link="left_steering_hinge" />
         <origin xyz="${RACECAR_STEERING_HINGE_X} ${RACECAR_STEERING_HINGE_Y} ${RACECAR_STEERING_HINGE_Z}"/> 
         <axis xyz="0 1 0" />
-        <limit effort="100.0" velocity="10.0" lower="-0.795" upper="+0.795"/>
+        <limit effort="${EFFORT_LIMIT}" velocity="${VELOCITY_LIMIT}" lower="-${STEERING_LIMIT}" upper="+${STEERING_LIMIT}"/>
     </joint>
 
     <joint name="base_chassis_to_right_steering_hinge" type="revolute">
@@ -121,7 +130,7 @@
         <child link="right_steering_hinge" />
         <origin xyz="${RACECAR_STEERING_HINGE_X} -${RACECAR_STEERING_HINGE_Y} ${RACECAR_STEERING_HINGE_Z}"/> 
         <axis xyz="0 1 0" />
-        <limit effort="100.0" velocity="10.0" lower="-0.795" upper="+0.795"/>
+        <limit effort="${EFFORT_LIMIT}" velocity="${VELOCITY_LIMIT}" lower="-${STEERING_LIMIT}" upper="+${STEERING_LIMIT}"/>
     </joint>
 
     <joint name="base_chassis_to_left_rear_wheel" type="continuous">
@@ -129,7 +138,7 @@
         <child link="left_rear_wheel" />
         <origin xyz="${RACECAR_WHEEL_REAR_X} ${RACECAR_WHEEL_REAR_Y} ${RACECAR_WHEEL_REAR_Z}"/> 
         <axis xyz="0 1 0" />
-        <limit effort="100.0" velocity="10.0"/>
+        <limit effort="${EFFORT_LIMIT}" velocity="${VELOCITY_LIMIT}"/>
     </joint>
 
     <joint name="base_chassis_to_right_rear_wheel" type="continuous">
@@ -137,7 +146,7 @@
         <child link="right_rear_wheel" />
         <origin xyz="${RACECAR_WHEEL_REAR_X} -${RACECAR_WHEEL_REAR_Y} ${RACECAR_WHEEL_REAR_Z}"/> 
         <axis xyz="0 1 0" />
-        <limit effort="100.0" velocity="10.0"/>
+        <limit effort="${EFFORT_LIMIT}" velocity="${VELOCITY_LIMIT}"/>
     </joint>
 
     <!-- Left & Right Steering Hinges + Joints to wheels -->
@@ -179,7 +188,7 @@
         <child link="left_front_wheel" />
         <origin xyz="0 0 0"/> 
         <axis xyz="0 1 0" />
-        <limit effort="100.0" velocity="10.0"/>
+        <limit effort="${EFFORT_LIMIT}" velocity="${VELOCITY_LIMIT}"/>
     </joint>
 
     <joint name="right_steering_hinge_to_right_front_wheel" type="continuous">
@@ -187,7 +196,7 @@
         <child link="right_front_wheel" />
         <origin xyz="0 0 0"/> 
         <axis xyz="0 1 0" />
-        <limit effort="100.0" velocity="10.0"/>
+        <limit effort="${EFFORT_LIMIT}" velocity="${VELOCITY_LIMIT}"/>
     </joint>
 
     <!-- Front Wheels -->
@@ -272,26 +281,29 @@
         </inertial> 
     </link>
 
+    <!-- Gazebo Ackermann Plugin-->
     <gazebo>
         <plugin
             filename="gz-sim-ackermann-steering-system"
             name="gz::sim::systems::AckermannSteering">
-            <left_joint>base_chassis_to_left_front_wheel</left_joint>
+
+            <left_joint>base_chassis_to_left_front_wheel</left_joint> <!-- Names defined in the joints-->
             <left_joint>base_chassis_to_left_rear_wheel</left_joint>
             <right_joint>base_chassis_to_right_front_wheel</right_joint>
             <right_joint>base_chassis_to_right_rear_wheel</right_joint>
             <left_steering_joint>base_chassis_to_left_steering_hinge</left_steering_joint>
             <right_steering_joint>base_chassis_to_right_steering_hinge</right_steering_joint>
-            <kingpin_width>1.0</kingpin_width>
-            <steering_limit>0.5</steering_limit>
-            <wheel_base>1.0</wheel_base>
-            <wheel_separation>1.25</wheel_separation>
-            <wheel_radius>0.3</wheel_radius>
-            <min_velocity>-1</min_velocity>
-            <max_velocity>1</max_velocity>
-            <min_acceleration>-3</min_acceleration>
-            <max_acceleration>3</max_acceleration>
-            <topic>/cmd_vel</topic>
+
+            <kingpin_width>${RACECAR_STEERING_HINGES_DISTANCE}</kingpin_width>
+            <steering_limit>${STEERING_LIMIT}</steering_limit>
+            <wheel_base>${WHEELBASE}</wheel_base>
+            <wheel_separation>${RACECAR_STEERING_HINGES_DISTANCE}</wheel_separation> <!-- -->
+            <wheel_radius>${WHEEL_WIDTH}</wheel_radius>
+            <min_velocity>${MIN_VELOCITY}</min_velocity>
+            <max_velocity>${MAX_VELOCITY}</max_velocity>
+            <min_acceleration>${MIN_ACCELERATION}</min_acceleration>
+            <max_acceleration>${MAX_ACCELERATION}</max_acceleration>
+            <topic>${TOPIC_TO_BRIDGE_ACKERMANN}</topic>
       </plugin>
     </gazebo>
 </robot>
