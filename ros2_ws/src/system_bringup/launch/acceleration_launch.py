@@ -32,8 +32,10 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(gz_launch_path),
             launch_arguments={
-                'gz_args': PathJoinSubstitution([sim_description_pkg_path,
-                                                'worlds/acceleration.sdf']),
+                'gz_args': [
+                    PathJoinSubstitution([sim_description_pkg_path,
+                                                'worlds/acceleration.sdf']), 
+                    ' -r'], 
                 'on_exit_shutdown': 'True' 
             }.items(),
         ),
@@ -85,33 +87,5 @@ def generate_launch_description():
             output='screen',
             emulate_tty=True,
         ), 
-
-        # ROS2 Control Nodes 
-        Node(
-            package='controller_manager',
-            executable='spawner',
-            arguments=[
-                'joint_state_broadcaster',
-                '--controller-manager',
-                '/racecar_controller',
-            ],
-            output='screen',
-            parameters=[{'use_sim_time' : True}], 
-        ),
-
-        Node(
-            package='controller_manager',
-            executable='spawner',
-            arguments=[
-                'ackermann_controller',
-                '--controller-manager',
-                '/racecar_controller',
-            ],
-            parameters=[
-                PathSubstitution(FindPackageShare("simulator_description")) / "config" / "ackermann_controller_param.yaml",
-                {'use_sim_time' : True}, 
-            ], 
-            output='screen',
-        ),
 
     ])
