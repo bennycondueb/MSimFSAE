@@ -287,9 +287,9 @@
             filename="gz-sim-ackermann-steering-system"
             name="gz::sim::systems::AckermannSteering">
 
-            <left_joint>base_chassis_to_left_front_wheel</left_joint> <!-- Names defined in the joints-->
+            <left_joint>left_steering_hinge_to_left_front_wheel</left_joint> <!-- Names defined in the joints-->
             <left_joint>base_chassis_to_left_rear_wheel</left_joint>
-            <right_joint>base_chassis_to_right_front_wheel</right_joint>
+            <right_joint>right_steering_hinge_to_right_front_wheel</right_joint>
             <right_joint>base_chassis_to_right_rear_wheel</right_joint>
             <left_steering_joint>base_chassis_to_left_steering_hinge</left_steering_joint>
             <right_steering_joint>base_chassis_to_right_steering_hinge</right_steering_joint>

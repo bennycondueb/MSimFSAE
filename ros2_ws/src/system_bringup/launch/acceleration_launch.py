@@ -1,7 +1,7 @@
 import os
 
 from ament_index_python.packages import get_package_prefix
-from ament_index_pythong.packages import get_package_share_directory, get_package_share_path
+from ament_index_python.packages import get_package_share_directory, get_package_share_path
 from launch import LaunchDescription
 from launch.actions import AppendEnvironmentVariable, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -45,7 +45,7 @@ def generate_launch_description():
         Node(
             package='ros_gz_bridge',
             executable='parameter_bridge',
-            arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',],
+            arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock', '/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist'],
             output='screen',
             parameters=[{'use_sim_time': True}],
         ),
