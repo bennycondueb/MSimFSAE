@@ -45,7 +45,8 @@ def generate_launch_description():
         Node(
             package='ros_gz_bridge',
             executable='parameter_bridge',
-            arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock', '/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist'],
+            arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+                       '/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist'],
             output='screen',
             parameters=[{'use_sim_time': True}],
         ),
