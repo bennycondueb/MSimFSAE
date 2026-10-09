@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(slam)
+project(racecar_controller)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -25,12 +25,13 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-add_executable(slam src/slam.cpp)
-target_link_libraries(slam rclcpp::rclcpp)
-target_link_libraries(slam std_msgs::std_msgs)
+add_executable(racecar_controller src/racecar_controller.cpp)
+target_link_libraries(racecar_controller rclcpp::rclcpp)
+target_link_libraries(racecar_controller std_msgs::std_msgs)
+
 
 install(TARGETS
-  slam
+  racecar_controller
   DESTINATION lib/${PROJECT_NAME}
 )
 

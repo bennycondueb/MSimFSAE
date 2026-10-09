@@ -10,7 +10,8 @@ https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debs.html
 
 https://hub.docker.com/r/osrf/ros/
 ros:lyrical-ros-base-resolute image 
-
+ros-lyrical-ros2-control # to run! 
+ros-lyrical-ros2-controllers
 
 
 # Gazebo Jetty Container: 

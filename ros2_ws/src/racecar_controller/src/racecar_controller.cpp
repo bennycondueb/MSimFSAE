@@ -11,13 +11,13 @@ using namespace std::chrono_literals;
 * function to shorten the callback syntax, at the expense of making the
 * code somewhat more difficult to understand at first glance. */
 
-class MinimalPublisher : public rclcpp::Node
+class RaceCarController : public rclcpp::Node
 {
 public:
-  MinimalPublisher()
-  : Node("minimal_publisher"), count_(0)
+  RaceCarController()
+  : Node("racecar_controller"), count_(0)
   {
-    publisher_ = this->create_publisher<std_msgs::msg::String>("topic", 10);
+    publisher_ = this->create_publisher<std_msgs::msg::String>("racecar_controller_topic", 10);
     auto timer_callback =
       [this]() -> void {
         auto message = std_msgs::msg::String();
@@ -37,7 +37,7 @@ private:
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<MinimalPublisher>());
+  rclcpp::spin(std::make_shared<RaceCarController>());
   rclcpp::shutdown();
   return 0;
 }
